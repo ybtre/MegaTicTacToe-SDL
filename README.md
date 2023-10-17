@@ -1,0 +1,21 @@
+#DevLog
+multi grid tic tac toe
+
+## Game 3/10 in the 10 games in 10 weeks challenge
+////////////////////////////////////
+              NOTE:
+////////////////////////////////////
+#### Goals:
+- spend min ~12h per game
+- aim for 10 games by week 10 
+- have a small scope finished game by the end of the week
+- even if not finished - still release it
+
+////////////////////////////////////
+              TODO:
+////////////////////////////////////
+
+
+////////////////////////////////////
+              DONE:
+////////////////////////////////////
