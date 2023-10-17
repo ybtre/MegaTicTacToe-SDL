@@ -14,8 +14,22 @@ multi grid tic tac toe
 ////////////////////////////////////
               TODO:
 ////////////////////////////////////
-
+- make main 3x3 grid
+- make side 3x3 grid
+- make main grid playable TTT
+- make side grid interactable and switch individual TTT boards
+- make side grid connected with main grid
+- make overall game win condition (line/diagonal on side grid = win for player)
+- add visuals from spritesheet
+- polish
 
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
+
+// 17.10.2023 - ~1:30h
+- basic mockup
+- basic 3x3 grid drawing
+- basic grid tile interaction with mouse pos
+- project structuring WIP
+

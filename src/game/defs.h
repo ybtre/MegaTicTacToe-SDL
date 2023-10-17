@@ -15,7 +15,9 @@
 #define PLAYER_SPEED            20
 #define PLAYER_DELTA            .5
 
-#define GRID_SIZE               64
+#define GRID_SIZE               9
+#define GRID_X                  3
+#define GRID_Y                  3
 
 #define ENTITIES_MAX            64
 

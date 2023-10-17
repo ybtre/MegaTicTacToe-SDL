@@ -93,27 +93,36 @@ typedef struct
 
 typedef enum Entity_Type
 {
-    PLAYER      = 0,
-    PLATFORM    = 1,
-    TRAP        = 2,
-    ENVIRONMENT = 3,
+    GRID_TILE   = 0,
+    GRID_LARGE  = 1,
+    GRID_SMALL  = 2,
 } Entity_Type;
+
+typedef enum Grid_Color
+{
+    R = 0,
+    G = 1,
+    B = 2,
+} Grid_Color;
 
 typedef struct
 {
     char            active;
+    Entity_Type     ent_type;
 
-    int             x;
-    int             y;
-    int             dx;
-    int             dy;
+    int             x;      //world x
+    int             y;      //world y
+    int             idx;    //grid id x
+    int             idy;    //grid id y
 
     SDL_Rect        hitbox;
+    SDL_Rect        dest;
+
+    Grid_Color      color;
     Sprite          *sprite;
     //Layers          layer;
-    Entity_Type     ent_type;
 } Entity;
-extern Entity player;
+extern Entity grid_large[GRID_X][GRID_Y];
 
 typedef struct
 {

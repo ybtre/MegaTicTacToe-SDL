@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 Game game;
-Entity player;
+Entity grid_large[GRID_X][GRID_Y];
 Stage stage;
 Game_State game_state;
 

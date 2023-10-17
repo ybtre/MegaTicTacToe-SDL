@@ -25,7 +25,7 @@ void init_stage(void)
     cursor_texture = load_texture("assets/cursor.png");
     game.spritesheet = load_texture("assets/spritesheet.png"); 
 
-    game_state = MAIN_MENU;
+    game_state = PLAYING;
 
     //TODO:
     init_board();
