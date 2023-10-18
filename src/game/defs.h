@@ -37,14 +37,6 @@ enum
     TEXT_RIGHT
 };
 
-enum
-{
-    WPN_PISTOL,
-    WPN_SMG,
-    WPN_SHOTGUN,
-    WPN_MAX,
-};
-
 #define inline static
 
 
@@ -62,6 +54,7 @@ enum
 #define AND     &&
 #define OR      ||
 #define MOD     %
+#define elif    else if
 
 #define ifnull( _ ) if( ( _ ) == NULL)
 

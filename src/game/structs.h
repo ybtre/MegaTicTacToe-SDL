@@ -126,6 +126,41 @@ extern Entity grid_large[GRID_X][GRID_Y];
 
 typedef struct
 {
+    int         x;
+    int         y;
+    int         idx;
+    int         idy;
+
+    SDL_Rect    dest;
+} Common_Ent_Data;
+
+typedef enum
+{
+    TILE_EMPTY          = 0,
+    TILE_GREEN          = 1,
+    TILE_ORANGE         = 2,
+    TILE_HIGHLIGHTED    = 3,
+    TILE_WIN            = 4,
+} Tile_State;
+
+typedef struct
+{
+    Tile_State          state;
+
+    Common_Ent_Data     data;
+} Tile;
+
+typedef struct
+{
+    Grid_Color          color;
+
+    Tile                tiles[GRID_X][GRID_Y];
+
+    Common_Ent_Data     data;
+} Board;
+
+typedef struct
+{
     //Entity 0 is always player
     int             entity_count;
     Entity          entities_pool[ENTITIES_MAX];
