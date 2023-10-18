@@ -9,153 +9,165 @@
 inline void draw_debug_placement_lines(void);
 inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT);
 
-inline char rgb = 2;
-
-inline Sprite   p_sprite;
-inline char     was_pressed_this_frame = 0;
-inline SDL_Rect rect = 
-{
-    0, 0, 160, 160
-};
-inline SDL_Rect mouse_r  =
+inline SDL_Rect mouse_rect  =
 {
     0, 0, 1, 1
 };
 
 Board board = {};
 
+#define BOARD_X             3
+#define BOARD_Y             3
+Board boards[BOARD_X][BOARD_Y];
+
 
 void init_board()
 {
-    int x, y, margin;
+    int x, y, gx, gy, margin;
     Vec2i start_offset = {};
     margin = 5;
-    start_offset.x = get_scr_width_scaled() / 3;
-    start_offset.y = get_scr_height_scaled() / 14;
+    start_offset.x = get_scr_width_scaled() / 2 - (55 * 5);
+    start_offset.y = get_scr_height_scaled() / 12;
     SDL_Rect d = {0, 0, 184, 184};
-
-    board.color = 0;
-
-    board.data.x = 0;
-    board.data.y = 0;
-    board.data.dest.x = 0;
-    board.data.dest.y = 0;
-    board.data.dest.w = 400;
-    board.data.dest.h = 400;
-    board.data.idx = 0;
-    board.data.idy = 0;
-
+    
     Tile tile;
-    for(x = 0; x < GRID_X; x++){
-        for(y = 0; y < GRID_Y; y++) 
+    int tile_size = 184;
+    tile_size = 55;
+
+    for(x = 0; x < BOARD_X; x++) {
+        for(y = 0; y < BOARD_Y; y++)
         {
-            tile.state = TILE_EMPTY;
-            
-            tile.data.dest.w = 184;
-            tile.data.dest.h = tile.data.dest.w;
+            boards[x][y].color = 0;
 
-            tile.data.dest.x = start_offset.x + (x * (tile.data.dest.w + margin));
-            tile.data.dest.y = start_offset.y + (y * (tile.data.dest.h + margin));
+            boards[x][y].data.x = (start_offset.x + (x * (tile_size * 3 + margin * 3)));
+            boards[x][y].data.y = (start_offset.y + (y * (tile_size * 3 + margin * 3)));
 
-            tile.data.x = tile.data.dest.x;
-            tile.data.y = tile.data.dest.y;
+            boards[x][y].data.dest.x = boards[x][y].data.x;
+            boards[x][y].data.dest.y = boards[x][y].data.y;
+            boards[x][y].data.dest.w = tile_size * GRID_X + margin * 2;
+            boards[x][y].data.dest.h = tile_size * GRID_Y + margin * 2;
+            boards[x][y].data.idx = x;
+            boards[x][y].data.idy = y;
 
-            tile.data.idx = x;
-            tile.data.idy = y;
+            for(gx = 0; gx < GRID_X; gx++){
+                for(gy = 0; gy < GRID_Y; gy++) 
+                {
+                    tile.state = TILE_EMPTY;
+                    
+                    tile.data.dest.w = tile_size;
+                    tile.data.dest.h = tile.data.dest.w;
 
-            board.tiles[x][y] = tile;
+                    tile.data.dest.x = boards[x][y].data.x + (gx * (tile.data.dest.w + margin));
+                    tile.data.dest.y = boards[x][y].data.y + (gy * (tile.data.dest.h + margin));
+
+                    tile.data.x = tile.data.dest.x;
+                    tile.data.y = tile.data.dest.y;
+
+                    tile.data.idx = x;
+                    tile.data.idy = y;
+
+                    boards[x][y].tiles[gx][gy] = tile;
+                }
+            }   
         }
-    }   
+    }
 }
 
 void update_board(void)
 {
-    mouse_r.x = game.mouse.x;
-    mouse_r.y = game.mouse.y;
-
-    Tile *tile = NULL;
-    int x, y;
-    for(x = 0; x < GRID_X; x++) {
-        for(y = 0; y < GRID_Y; y++) 
+    Board *board = NULL;
+    int x, y, gx, gy;
+    for(x = 0; x < BOARD_X; x++) {
+        for(y = 0; y < BOARD_Y; y++)
         {
-            tile = &board.tiles[x][y];
+            board = &boards[x][y];
+            mouse_rect.x = game.mouse.x;
+            mouse_rect.y = game.mouse.y;
 
-            char hover = 0;
-            char pressed = 0;
-            if(SDL_HasIntersection(&mouse_r, &tile->data.dest))
-            {
-
-                hover = 1;
-
-                if(game.mouse.button[SDL_BUTTON_LEFT])
+            Tile *tile = NULL;
+            for(gx = 0; gx < GRID_X; gx++) {
+                for(gy = 0; gy < GRID_Y; gy++) 
                 {
-                    pressed = 1;
+                    tile = &board->tiles[gx][gy];
+
+                    char hover = 0;
+                    char pressed = 0;
+                    if(SDL_HasIntersection(&mouse_rect, &tile->data.dest))
+                    {
+
+                        hover = 1;
+
+                        if(game.mouse.button[SDL_BUTTON_LEFT])
+                        {
+                            pressed = 1;
+                        }
+                        if(game.mouse.button[SDL_BUTTON_RIGHT])
+                        {
+                            pressed = 2;
+                        }
+                    }
+                    else 
+                    {
+                        hover = 0;
+                        pressed = 0;
+                    }
+
+                    if(tile->state == TILE_WIN)
+                        continue;
+
+                    if(hover == 1 AND pressed == 0 
+                            AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
+                    {
+                        tile->state = TILE_HIGHLIGHTED;
+                    }
+                    elif(hover == 0 AND pressed == 0 
+                            AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
+                    {
+                        tile->state = TILE_EMPTY;
+                    }
+                    elif(hover == 1 AND pressed == 1 AND tile->state == TILE_HIGHLIGHTED)
+                    {
+                        tile->state = TILE_GREEN;
+                    }
+                    elif(hover == 1 AND pressed == 2 AND tile->state == TILE_HIGHLIGHTED)
+                    {
+                        tile->state = TILE_ORANGE;
+                    }
                 }
-                if(game.mouse.button[SDL_BUTTON_RIGHT])
-                {
-                    pressed = 2;
-                }
-            }
-            else 
-            {
-                hover = 0;
-                pressed = 0;
             }
 
-            if(tile->state == TILE_WIN)
-                continue;
+            //check win condition
+            Tile *mid, *left, *right = NULL;
+            int i = 0;
+            for(i = 0; i < 3; i++)
+            {
+                mid = &board->tiles[1][i];
+                left = &board->tiles[0][i];
+                right = &board->tiles[2][i];
 
-            if(hover == 1 AND pressed == 0 
-                    AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
-            {
-                tile->state = TILE_HIGHLIGHTED;
+                win_state_check(mid, left, right);
+
+                mid = &board->tiles[i][1];
+                left = &board->tiles[i][0];
+                right = &board->tiles[i][2];
+
+                win_state_check(mid, left, right);
             }
-            elif(hover == 0 AND pressed == 0 
-                    AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
-            {
-                tile->state = TILE_EMPTY;
-            }
-            elif(hover == 1 AND pressed == 1 AND tile->state == TILE_HIGHLIGHTED)
-            {
-                tile->state = TILE_GREEN;
-            }
-            elif(hover == 1 AND pressed == 2 AND tile->state == TILE_HIGHLIGHTED)
-            {
-                tile->state = TILE_ORANGE;
-            }
+
+            mid = &board->tiles[1][1];
+            left = &board->tiles[0][0];
+            right = &board->tiles[2][2];
+
+            win_state_check(mid, left, right);
+
+            mid = &board->tiles[1][1];
+            left = &board->tiles[0][2];
+            right = &board->tiles[2][0];
+
+            win_state_check(mid, left, right);
         }
-    }
-
-    //check win condition
-    Tile *mid, *left, *right = NULL;
-    int i = 0;
-    for(i = 0; i < 3; i++)
-    {
-        mid = &board.tiles[1][i];
-        left = &board.tiles[0][i];
-        right = &board.tiles[2][i];
-
-        win_state_check(mid, left, right);
-
-        mid = &board.tiles[i][1];
-        left = &board.tiles[i][0];
-        right = &board.tiles[i][2];
-
-        win_state_check(mid, left, right);
-    }
-
-    mid = &board.tiles[1][1];
-    left = &board.tiles[0][0];
-    right = &board.tiles[2][2];
-
-    win_state_check(mid, left, right);
-
-    mid = &board.tiles[1][1];
-    left = &board.tiles[0][2];
-    right = &board.tiles[2][0];
-
-    win_state_check(mid, left, right);
-}   
+    }   
+}
 
 inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
 {
@@ -175,40 +187,46 @@ inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
 
 void draw_board(void)
 {
-    //draw_debug_placement_lines();
-    
-
-    int x, y;
+    int x, y, gx, gy;
     Tile *tile = NULL;
-    for(x = 0; x < GRID_X; x++){
-        for(y = 0; y < GRID_Y; y++) 
+    Board *b = NULL;
+    for(x = 0; x < BOARD_X; x++) {
+        for(y = 0; y < BOARD_Y; y++)
         {
-            tile = &board.tiles[x][y];
-            
-            SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 255);
-            if(tile->state == TILE_GREEN)
-            {
-                SDL_SetRenderDrawColor(game.renderer, 190, 215, 134, 255);
-            }
-            elif(tile->state == TILE_ORANGE)
-            {
-                SDL_SetRenderDrawColor(game.renderer, 235, 162, 84, 255);
-            }
-            elif(tile->state == TILE_EMPTY)
-            {
-                SDL_SetRenderDrawColor(game.renderer, 24, 50, 62, 255);
-            }
-            elif(tile->state == TILE_HIGHLIGHTED)
-            {
-                SDL_SetRenderDrawColor(game.renderer, 89, 102, 102, 255);
-            }
-            elif(tile->state == TILE_WIN)
-            {
-                SDL_SetRenderDrawColor(game.renderer, 255, 102, 102, 255);
-            }
+            b = &boards[x][y];
+            SDL_SetRenderDrawColor(game.renderer, 89, 102, 102, 255);
+            SDL_RenderFillRect(game.renderer, &b->data.dest);
 
-            SDL_RenderFillRect(game.renderer, &tile->data.dest);
+            for(gx = 0; gx < GRID_X; gx++){
+                for(gy = 0; gy < GRID_Y; gy++) 
+                {
+                    tile = &b->tiles[gx][gy];
 
+                    SDL_SetRenderDrawColor(game.renderer, 255, 255, 255, 255);
+                    if(tile->state == TILE_GREEN)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 190, 215, 134, 255);
+                    }
+                    elif(tile->state == TILE_ORANGE)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 235, 162, 84, 255);
+                    }
+                    elif(tile->state == TILE_EMPTY)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 24, 50, 62, 255);
+                    }
+                    elif(tile->state == TILE_HIGHLIGHTED)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 89, 102, 102, 255);
+                    }
+                    elif(tile->state == TILE_WIN)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 255, 102, 102, 255);
+                    }
+
+                    SDL_RenderFillRect(game.renderer, &tile->data.dest);
+                }
+            }
         }
     }
 }
@@ -216,22 +234,25 @@ void draw_board(void)
 inline void draw_debug_placement_lines(void)
 {
     SDL_SetRenderDrawColor(game.renderer, 255, 0, 0, 255);
+
+    int r = 9;
+    int c = 16;
     int i = 0;
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < c; i++)
     {
         SDL_RenderDrawLine(game.renderer, 
-                (i * (get_scr_width_scaled() / 4)),
+                (i * (get_scr_width_scaled() / c)),
                 0,
-                (i * (get_scr_width_scaled() / 4)),
+                (i * (get_scr_width_scaled() / c)),
                 get_scr_height_scaled());
     }
-    for(i = 0; i < 3; i++)
+    for(i = 0; i < r; i++)
     {
         SDL_RenderDrawLine(game.renderer,
                 0,
-                (i * (get_scr_height_scaled() / 3)),
+                (i * (get_scr_height_scaled() / r)),
                 get_scr_width_scaled(),
-                (i * (get_scr_height_scaled() / 3)));
+                (i * (get_scr_height_scaled() / r)));
     }
 
 }

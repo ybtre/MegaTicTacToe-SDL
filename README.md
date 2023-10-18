@@ -1,4 +1,4 @@
-#DevLog
+#DevLog - ~5:30h
 multi grid tic tac toe
 
 ## Game 3/10 in the 10 games in 10 weeks challenge
@@ -14,8 +14,10 @@ multi grid tic tac toe
 ////////////////////////////////////
               TODO:
 ////////////////////////////////////
-- refactor board to be able to scale it into 9 individual ones
-- connect the boards
+- implement turns
+- connect the boards (when playing a move on 1 board it moves you to the corresponding board)
+- indicate visually which board you need to play on
+- final win condition implementation
 - add visuals from spritesheet
 - polish
 
@@ -23,11 +25,13 @@ multi grid tic tac toe
               DONE:
 ////////////////////////////////////
 
-// 18.10.2023 - ~2:30h
+// 18.10.2023 - ~4:00h
 - board rework
 - tile mouse interaction 
 - tile states
 - win condition check
+- single board refactor to support scaling to 9 separate boards
+- scale single board into 9 separte boards
 
 // 17.10.2023 - ~1:30h
 - basic mockup
