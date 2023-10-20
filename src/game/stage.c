@@ -25,9 +25,10 @@ void init_stage(void)
     cursor_texture = load_texture("assets/cursor.png");
     game.spritesheet = load_texture("assets/spritesheet.png"); 
 
-    game_state = PLAYING;
+    game_state = MAIN_MENU;
 
     //TODO:
+    stage.turn = TURN_NOONE;
     init_board();
 }
 
@@ -36,14 +37,15 @@ inline void update(void)
     switch(game_state)
     {
         case MAIN_MENU:
-            // {
-            //     if(game.keyboard[SDL_SCANCODE_SPACE])
-            //     {
-            //         reset_game();
-            //         game_state = PLAYING;
-            //     }
-            // }
-            // break;
+             {
+                 if(game.keyboard[SDL_SCANCODE_SPACE])
+                 {
+                     //reset_game();
+                     stage.turn = TURN_GREEN;
+                     game_state = PLAYING;
+                 }
+             }
+             break;
         
         case PLAYING:
             {
@@ -86,7 +88,7 @@ inline void render(void)
                 char buff[32];
                 sprintf(buff, "PRESS SPACE TO PLAY!");
 
-                SDL_Rect dest = {get_scr_width_scaled() / 5, get_scr_height_scaled() / 2, 0, 0};
+                SDL_Rect dest = {get_scr_width_scaled() / 4, get_scr_height_scaled() / 2, 0, 0};
                 render_text(buff, dest, 2.f);
             }
             break;

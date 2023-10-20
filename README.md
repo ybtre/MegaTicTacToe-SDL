@@ -1,4 +1,4 @@
-#DevLog - ~5:30h
+#DevLog - ~6:45h
 multi grid tic tac toe
 
 ## Game 3/10 in the 10 games in 10 weeks challenge
@@ -14,8 +14,6 @@ multi grid tic tac toe
 ////////////////////////////////////
               TODO:
 ////////////////////////////////////
-- implement turns
-- connect the boards (when playing a move on 1 board it moves you to the corresponding board)
 - indicate visually which board you need to play on
 - final win condition implementation
 - add visuals from spritesheet
@@ -24,6 +22,12 @@ multi grid tic tac toe
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
+
+// 19.10.2023 - ~1:15h
+- implement turns
+- track individual board winner
+- allow only 1 winner per board
+- connect the boards (when playing a move on 1 board it moves you to the corresponding board)
 
 // 18.10.2023 - ~4:00h
 - board rework

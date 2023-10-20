@@ -7,7 +7,7 @@
 #include "board.h"
 
 inline void draw_debug_placement_lines(void);
-inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT);
+inline char win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT);
 
 inline SDL_Rect mouse_rect  =
 {
@@ -71,16 +71,21 @@ void init_board()
             }   
         }
     }
+
+    stage.current_board = &boards[1][1];
 }
 
 void update_board(void)
 {
     Board *board = NULL;
     int x, y, gx, gy;
+    /*
     for(x = 0; x < BOARD_X; x++) {
         for(y = 0; y < BOARD_Y; y++)
         {
-            board = &boards[x][y];
+        */
+            //board = &boards[x][y];
+            board = stage.current_board;
             mouse_rect.x = game.mouse.x;
             mouse_rect.y = game.mouse.y;
 
@@ -100,10 +105,6 @@ void update_board(void)
                         if(game.mouse.button[SDL_BUTTON_LEFT])
                         {
                             pressed = 1;
-                        }
-                        if(game.mouse.button[SDL_BUTTON_RIGHT])
-                        {
-                            pressed = 2;
                         }
                     }
                     else 
@@ -127,50 +128,89 @@ void update_board(void)
                     }
                     elif(hover == 1 AND pressed == 1 AND tile->state == TILE_HIGHLIGHTED)
                     {
-                        tile->state = TILE_GREEN;
-                    }
-                    elif(hover == 1 AND pressed == 2 AND tile->state == TILE_HIGHLIGHTED)
-                    {
-                        tile->state = TILE_ORANGE;
+                        if(stage.turn == TURN_GREEN)
+                        {
+                            tile->state = TILE_GREEN;
+
+                            // hand over turn to other playuer
+                            stage.turn = TURN_ORANGE;
+                            stage.prev_turn = TURN_GREEN;
+                        }
+                        elif(stage.turn == TURN_ORANGE)
+                        {
+                            tile->state = TILE_ORANGE;
+
+                            // hand over turn to other playuer
+                            stage.turn = TURN_GREEN;
+                            stage.prev_turn = TURN_ORANGE;
+                        }
+
+                        stage.current_board = &boards[gx][gy];
                     }
                 }
             }
 
-            //check win condition
-            Tile *mid, *left, *right = NULL;
-            int i = 0;
-            for(i = 0; i < 3; i++)
-            {
-                mid = &board->tiles[1][i];
-                left = &board->tiles[0][i];
-                right = &board->tiles[2][i];
+            {//check win condition for current small board
+                if(board->winner == 0)
+                {
+                    char win = false;
+                    Tile *mid, *left, *right = NULL;
+                    int i = 0;
+                    for(i = 0; i < 3; i++)
+                    {
+                        mid = &board->tiles[1][i];
+                        left = &board->tiles[0][i];
+                        right = &board->tiles[2][i];
 
-                win_state_check(mid, left, right);
+                        win = win_state_check(mid, left, right);
+                        if(win)
+                        {
+                            board->winner = stage.prev_turn;
+                            break;
+                        }
 
-                mid = &board->tiles[i][1];
-                left = &board->tiles[i][0];
-                right = &board->tiles[i][2];
+                        mid = &board->tiles[i][1];
+                        left = &board->tiles[i][0];
+                        right = &board->tiles[i][2];
 
-                win_state_check(mid, left, right);
+                        win = win_state_check(mid, left, right);
+                        if(win)
+                        {
+                            board->winner = stage.prev_turn; 
+                            break;
+                        }
+                    }
+
+                    mid = &board->tiles[1][1];
+                    left = &board->tiles[0][0];
+                    right = &board->tiles[2][2];
+
+                    win = win_state_check(mid, left, right);
+                    if(win)
+                        board->winner = stage.prev_turn; 
+
+                    if(!win)
+                    {
+                        mid = &board->tiles[1][1];
+                        left = &board->tiles[0][2];
+                        right = &board->tiles[2][0];
+
+                        win = win_state_check(mid, left, right);
+                        if(win)
+                            board->winner = stage.prev_turn; 
+                    }
+                }
             }
-
-            mid = &board->tiles[1][1];
-            left = &board->tiles[0][0];
-            right = &board->tiles[2][2];
-
-            win_state_check(mid, left, right);
-
-            mid = &board->tiles[1][1];
-            left = &board->tiles[0][2];
-            right = &board->tiles[2][0];
-
-            win_state_check(mid, left, right);
+            /*
         }
     }   
+*/
 }
 
-inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
+inline char win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
 {
+    char win = false;
+
     if(     (MID->state == TILE_GREEN
             AND LEFT->state == TILE_GREEN
             AND RIGHT->state == TILE_GREEN)
@@ -182,7 +222,11 @@ inline void win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
         MID->state = TILE_WIN;
         LEFT->state = TILE_WIN;
         RIGHT->state = TILE_WIN;
+
+        win = true;
     }
+
+    return(win);
 }
 
 void draw_board(void)
@@ -225,6 +269,19 @@ void draw_board(void)
                     }
 
                     SDL_RenderFillRect(game.renderer, &tile->data.dest);
+
+                    if(b->winner == PLAYER_GREEN)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 190, 215, 134, 255);
+                        SDL_Rect r = { 10, 300, 100, 100 };
+                        SDL_RenderFillRect(game.renderer, &r);
+                    }
+                    if(b->winner == PLAYER_ORANGE)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 235, 162, 84, 255);
+                        SDL_Rect r = { 10, 420, 100, 100 };
+                        SDL_RenderFillRect(game.renderer, &r);
+                    }
                 }
             }
         }

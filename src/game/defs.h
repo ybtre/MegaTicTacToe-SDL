@@ -15,6 +15,9 @@
 #define PLAYER_SPEED            20
 #define PLAYER_DELTA            .5
 
+#define PLAYER_GREEN            1
+#define PLAYER_ORANGE           2
+
 #define GRID_SIZE               9
 #define GRID_X                  3
 #define GRID_Y                  3
@@ -55,6 +58,8 @@ enum
 #define OR      ||
 #define MOD     %
 #define elif    else if
+#define true    1
+#define false   0
 
 #define ifnull( _ ) if( ( _ ) == NULL)
 

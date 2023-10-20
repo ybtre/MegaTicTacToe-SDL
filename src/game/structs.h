@@ -154,14 +154,28 @@ typedef struct
 {
     Grid_Color          color;
 
+    char                winner;
+
     Tile                tiles[GRID_X][GRID_Y];
 
     Common_Ent_Data     data;
 } Board;
 
+typedef enum
+{
+    TURN_NOONE        = 0,
+    TURN_GREEN        = 1,
+    TURN_ORANGE       = 2,
+} Turn;
+
 typedef struct
 {
     //Entity 0 is always player
+    Turn            turn;
+    Turn            prev_turn;
+
+    Board           *current_board;
+
     int             entity_count;
     Entity          entities_pool[ENTITIES_MAX];
 }Stage;
