@@ -176,6 +176,8 @@ typedef struct
 
     Board           *current_board;
 
+    char            game_winner;
+
     int             entity_count;
     Entity          entities_pool[ENTITIES_MAX];
 }Stage;

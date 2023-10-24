@@ -27,7 +27,6 @@ void init_stage(void)
 
     game_state = MAIN_MENU;
 
-    //TODO:
     stage.turn = TURN_NOONE;
     init_board();
 }
@@ -40,8 +39,7 @@ inline void update(void)
              {
                  if(game.keyboard[SDL_SCANCODE_SPACE])
                  {
-                     //reset_game();
-                     stage.turn = TURN_GREEN;
+                     reset_board();
                      game_state = PLAYING;
                  }
              }
@@ -49,24 +47,18 @@ inline void update(void)
         
         case PLAYING:
             {
-                //TODO:
                 update_board();
-
-                // if(stage.entities_pool[0].active == 0)
-                // {
-                //     game_state = GAME_OVER;
-                // }
             }
             break;
 
         case GAME_OVER:
-            // {
-            //     if(game.keyboard[SDL_SCANCODE_SPACE])
-            //     {
-            //         reset_game();
-            //         game_state = PLAYING;
-            //     }
-            // }
+            {
+                if(game.keyboard[SDL_SCANCODE_SPACE])
+                {
+                    reset_game();
+                    game_state = PLAYING;
+                }
+            }
             break;
 
     }
@@ -82,7 +74,6 @@ inline void render(void)
     {
         case MAIN_MENU:
             {
-                //TODO:
                 draw_board();
 
                 char buff[32];
@@ -95,14 +86,12 @@ inline void render(void)
         
         case PLAYING:
             {
-                //TODO:
                 draw_board();
             }
             break;
 
         case GAME_OVER:
             {
-                //TODO:
                 draw_board();
 
                 char buff[32];
@@ -120,6 +109,5 @@ inline void render(void)
 
 inline void reset_game(void)
 {
-    //TODO:
     reset_board();
 }

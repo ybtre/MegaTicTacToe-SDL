@@ -8,6 +8,7 @@
 
 inline void draw_debug_placement_lines(void);
 inline char win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT);
+inline char win_game_check(Board *MID, Board *LEFT, Board *RIGHT);
 
 inline SDL_Rect mouse_rect  =
 {
@@ -79,132 +80,192 @@ void update_board(void)
 {
     Board *board = NULL;
     int x, y, gx, gy;
-    /*
-    for(x = 0; x < BOARD_X; x++) {
-        for(y = 0; y < BOARD_Y; y++)
+    board = stage.current_board;
+    mouse_rect.x = game.mouse.x;
+    mouse_rect.y = game.mouse.y;
+
+    Tile *tile = NULL;
+    for(gx = 0; gx < GRID_X; gx++) {
+        for(gy = 0; gy < GRID_Y; gy++) 
         {
-        */
-            //board = &boards[x][y];
-            board = stage.current_board;
-            mouse_rect.x = game.mouse.x;
-            mouse_rect.y = game.mouse.y;
+            tile = &board->tiles[gx][gy];
 
-            Tile *tile = NULL;
-            for(gx = 0; gx < GRID_X; gx++) {
-                for(gy = 0; gy < GRID_Y; gy++) 
+            char hover = 0;
+            char pressed = 0;
+            if(SDL_HasIntersection(&mouse_rect, &tile->data.dest))
+            {
+
+                hover = 1;
+
+                if(game.mouse.button[SDL_BUTTON_LEFT])
                 {
-                    tile = &board->tiles[gx][gy];
-
-                    char hover = 0;
-                    char pressed = 0;
-                    if(SDL_HasIntersection(&mouse_rect, &tile->data.dest))
-                    {
-
-                        hover = 1;
-
-                        if(game.mouse.button[SDL_BUTTON_LEFT])
-                        {
-                            pressed = 1;
-                        }
-                    }
-                    else 
-                    {
-                        hover = 0;
-                        pressed = 0;
-                    }
-
-                    if(tile->state == TILE_WIN)
-                        continue;
-
-                    if(hover == 1 AND pressed == 0 
-                            AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
-                    {
-                        tile->state = TILE_HIGHLIGHTED;
-                    }
-                    elif(hover == 0 AND pressed == 0 
-                            AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
-                    {
-                        tile->state = TILE_EMPTY;
-                    }
-                    elif(hover == 1 AND pressed == 1 AND tile->state == TILE_HIGHLIGHTED)
-                    {
-                        if(stage.turn == TURN_GREEN)
-                        {
-                            tile->state = TILE_GREEN;
-
-                            // hand over turn to other playuer
-                            stage.turn = TURN_ORANGE;
-                            stage.prev_turn = TURN_GREEN;
-                        }
-                        elif(stage.turn == TURN_ORANGE)
-                        {
-                            tile->state = TILE_ORANGE;
-
-                            // hand over turn to other playuer
-                            stage.turn = TURN_GREEN;
-                            stage.prev_turn = TURN_ORANGE;
-                        }
-
-                        stage.current_board = &boards[gx][gy];
-                    }
+                    pressed = 1;
                 }
             }
-
-            {//check win condition for current small board
-                if(board->winner == 0)
-                {
-                    char win = false;
-                    Tile *mid, *left, *right = NULL;
-                    int i = 0;
-                    for(i = 0; i < 3; i++)
-                    {
-                        mid = &board->tiles[1][i];
-                        left = &board->tiles[0][i];
-                        right = &board->tiles[2][i];
-
-                        win = win_state_check(mid, left, right);
-                        if(win)
-                        {
-                            board->winner = stage.prev_turn;
-                            break;
-                        }
-
-                        mid = &board->tiles[i][1];
-                        left = &board->tiles[i][0];
-                        right = &board->tiles[i][2];
-
-                        win = win_state_check(mid, left, right);
-                        if(win)
-                        {
-                            board->winner = stage.prev_turn; 
-                            break;
-                        }
-                    }
-
-                    mid = &board->tiles[1][1];
-                    left = &board->tiles[0][0];
-                    right = &board->tiles[2][2];
-
-                    win = win_state_check(mid, left, right);
-                    if(win)
-                        board->winner = stage.prev_turn; 
-
-                    if(!win)
-                    {
-                        mid = &board->tiles[1][1];
-                        left = &board->tiles[0][2];
-                        right = &board->tiles[2][0];
-
-                        win = win_state_check(mid, left, right);
-                        if(win)
-                            board->winner = stage.prev_turn; 
-                    }
-                }
+            else 
+            {
+                hover = 0;
+                pressed = 0;
             }
-            /*
+
+            if(tile->state == TILE_WIN)
+                continue;
+
+            if(hover == 1 AND pressed == 0 
+                    AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
+            {
+                tile->state = TILE_HIGHLIGHTED;
+            }
+            elif(hover == 0 AND pressed == 0 
+                    AND tile->state != TILE_GREEN AND tile->state != TILE_ORANGE)
+            {
+                tile->state = TILE_EMPTY;
+            }
+            elif(hover == 1 AND pressed == 1 AND tile->state == TILE_HIGHLIGHTED)
+            {
+                if(stage.turn == TURN_GREEN)
+                {
+                    tile->state = TILE_GREEN;
+
+                    // hand over turn to other playuer
+                    stage.turn = TURN_ORANGE;
+                    stage.prev_turn = TURN_GREEN;
+                }
+                elif(stage.turn == TURN_ORANGE)
+                {
+                    tile->state = TILE_ORANGE;
+
+                    // hand over turn to other playuer
+                    stage.turn = TURN_GREEN;
+                    stage.prev_turn = TURN_ORANGE;
+                }
+
+                stage.current_board = &boards[gx][gy];
+            }
         }
-    }   
-*/
+    }
+
+    {//check win condition for current small board
+        if(board->winner == 0)
+        {
+            char win = false;
+            Tile *mid, *left, *right = NULL;
+            int i = 0;
+            for(i = 0; i < 3; i++)
+            {
+                mid = &board->tiles[1][i];
+                left = &board->tiles[0][i];
+                right = &board->tiles[2][i];
+
+                win = win_state_check(mid, left, right);
+                if(win)
+                {
+                    board->winner = stage.prev_turn;
+                    break;
+                }
+
+                mid = &board->tiles[i][1];
+                left = &board->tiles[i][0];
+                right = &board->tiles[i][2];
+
+                win = win_state_check(mid, left, right);
+                if(win)
+                {
+                    board->winner = stage.prev_turn; 
+                    break;
+                }
+            }
+
+            mid = &board->tiles[1][1];
+            left = &board->tiles[0][0];
+            right = &board->tiles[2][2];
+
+            win = win_state_check(mid, left, right);
+            if(win)
+                board->winner = stage.prev_turn; 
+
+            if(!win)
+            {
+                mid = &board->tiles[1][1];
+                left = &board->tiles[0][2];
+                right = &board->tiles[2][0];
+
+                win = win_state_check(mid, left, right);
+                if(win)
+                    board->winner = stage.prev_turn; 
+            }
+        }
+    }
+
+    {//check win condition for full board
+        Board mid_board;
+        Board left_board;
+        Board right_board;
+
+        for(int i = 0; i < 3; i++)
+        {
+            mid_board = boards[i][1];
+            left_board = boards[i][0];
+            right_board = boards[i][2];
+
+            win_game_check(&mid_board, &left_board, &right_board);
+
+            if(stage.game_winner != 0)
+                break;
+
+            mid_board = boards[1][i];
+            left_board = boards[0][i];
+            right_board = boards[2][i];
+
+            win_game_check(&mid_board, &left_board, &right_board);
+
+            if(stage.game_winner != 0)
+                break;
+        }
+
+        if(stage.game_winner != 0)
+        {
+            mid_board = boards[1][1];
+            left_board = boards[0][0];
+            right_board = boards[2][2];
+            
+            win_game_check(&mid_board, &left_board, &right_board);
+
+            if(stage.game_winner != 0)
+            {
+                mid_board = boards[1][1];
+                left_board = boards[0][2];
+                right_board = boards[2][0];
+
+                win_game_check(&mid_board, &left_board, &right_board);
+            }
+        }
+    }
+    
+    if(stage.game_winner != 0)
+    {
+       game_state = GAME_OVER; 
+    }
+}
+
+inline char win_game_check(Board *MID, Board *LEFT, Board *RIGHT)
+{
+
+    if(MID->winner == PLAYER_GREEN
+       AND LEFT->winner == PLAYER_GREEN
+       AND RIGHT->winner == PLAYER_GREEN)
+    {
+        stage.game_winner = PLAYER_GREEN;
+    }
+
+    if(MID->winner == PLAYER_ORANGE
+       AND LEFT->winner == PLAYER_ORANGE
+       AND RIGHT->winner == PLAYER_ORANGE)
+    {
+        stage.game_winner = PLAYER_ORANGE;
+    }
+
+    return(stage.game_winner);
 }
 
 inline char win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
@@ -316,5 +377,30 @@ inline void draw_debug_placement_lines(void)
 
 void reset_board(void)
 {
-    
+    stage.game_winner = 0;
+    stage.turn = TURN_GREEN;
+    stage.prev_turn = TURN_NOONE;
+    stage.current_board = &boards[1][1];
+
+    int bx, by, tx, ty = 0;
+    Board *board = NULL;
+    Tile *tile = NULL;
+
+    for(bx = 0; bx < BOARD_X; bx++){
+        for(by = 0; by < BOARD_Y; by++)
+        {
+            board = &boards[bx][by];
+
+            board->winner = 0;
+
+            for(tx = 0; tx < GRID_X; tx++){
+                for(ty = 0; ty < GRID_Y; ty++)
+                {
+                    tile = &board->tiles[tx][ty];
+
+                    tile->state = TILE_EMPTY;
+                }
+            }
+        }
+    }
 }

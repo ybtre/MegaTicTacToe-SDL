@@ -1,4 +1,4 @@
-#DevLog - ~6:45h
+#DevLog - ~7:30h
 multi grid tic tac toe
 
 ## Game 3/10 in the 10 games in 10 weeks challenge
@@ -15,13 +15,14 @@ multi grid tic tac toe
               TODO:
 ////////////////////////////////////
 - indicate visually which board you need to play on
-- final win condition implementation
-- add visuals from spritesheet
-- polish
 
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
+
+// 24.10.2023 - ~0:45h
+- final win condition implementation
+- game reset/restart
 
 // 19.10.2023 - ~1:15h
 - implement turns
