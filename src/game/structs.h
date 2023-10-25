@@ -140,7 +140,9 @@ typedef enum
     TILE_GREEN          = 1,
     TILE_ORANGE         = 2,
     TILE_HIGHLIGHTED    = 3,
-    TILE_WIN            = 4,
+    TILE_WIN_GREEN      = 4,
+    TILE_WIN_ORANGE     = 5,
+    TILE_ACTIVE_BOARD   = 6,
 } Tile_State;
 
 typedef struct

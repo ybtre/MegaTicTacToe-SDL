@@ -108,7 +108,7 @@ void update_board(void)
                 pressed = 0;
             }
 
-            if(tile->state == TILE_WIN)
+            if(tile->state == TILE_WIN_GREEN OR tile->state == TILE_WIN_ORANGE)
                 continue;
 
             if(hover == 1 AND pressed == 0 
@@ -144,6 +144,19 @@ void update_board(void)
             }
         }
     }
+
+    for(gx = 0; gx < GRID_X; gx++) {
+        for(gy = 0; gy < GRID_Y; gy++) 
+        {
+            tile = &stage.current_board->tiles[gx][gy];
+            
+            if(tile->state == TILE_EMPTY)
+            {
+                tile->state = TILE_ACTIVE_BOARD;
+            }
+        }
+    }
+
 
     {//check win condition for current small board
         if(board->winner == 0)
@@ -272,17 +285,23 @@ inline char win_state_check(Tile *MID, Tile *LEFT, Tile *RIGHT)
 {
     char win = false;
 
-    if(     (MID->state == TILE_GREEN
-            AND LEFT->state == TILE_GREEN
-            AND RIGHT->state == TILE_GREEN)
-        OR
-            (MID->state == TILE_ORANGE
-            AND LEFT->state == TILE_ORANGE
-            AND RIGHT->state == TILE_ORANGE))
+    if( MID->state == TILE_GREEN
+        AND LEFT->state == TILE_GREEN
+        AND RIGHT->state == TILE_GREEN)
     {
-        MID->state = TILE_WIN;
-        LEFT->state = TILE_WIN;
-        RIGHT->state = TILE_WIN;
+        MID->state = TILE_WIN_GREEN;
+        LEFT->state = TILE_WIN_GREEN;
+        RIGHT->state = TILE_WIN_GREEN;
+        win = true;
+    }
+
+    if( MID->state == TILE_ORANGE
+        AND LEFT->state == TILE_ORANGE
+        AND RIGHT->state == TILE_ORANGE)
+    {
+        MID->state = TILE_WIN_ORANGE;
+        LEFT->state = TILE_WIN_ORANGE;
+        RIGHT->state = TILE_WIN_ORANGE;
 
         win = true;
     }
@@ -324,9 +343,17 @@ void draw_board(void)
                     {
                         SDL_SetRenderDrawColor(game.renderer, 89, 102, 102, 255);
                     }
-                    elif(tile->state == TILE_WIN)
+                    elif(tile->state == TILE_WIN_GREEN)
                     {
-                        SDL_SetRenderDrawColor(game.renderer, 255, 102, 102, 255);
+                        SDL_SetRenderDrawColor(game.renderer, 26, 72, 44, 255);
+                    }
+                    elif(tile->state == TILE_WIN_ORANGE)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 143, 97, 51, 255);
+                    }
+                    elif(tile->state == TILE_ACTIVE_BOARD)
+                    {
+                        SDL_SetRenderDrawColor(game.renderer, 51, 73, 76, 255);
                     }
 
                     SDL_RenderFillRect(game.renderer, &tile->data.dest);

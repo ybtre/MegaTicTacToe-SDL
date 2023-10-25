@@ -73,12 +73,14 @@ int main(int argc, char *argv[])
         char curr_perf_buffer[32];
         sprintf(curr_perf_buffer, "Current Perf: %f", (float)frame_perf);
 
+        /*
         SDL_Rect dest = { 10, 10, 0, 0};
         render_text(fps_buffer, dest, 1.f);
         dest.y += 24;
         render_text(avg_buffer, dest, 1.f);
         dest.y += 24;
         render_text(curr_perf_buffer, dest, 1.f);
+        */
 
         //SDL_Delay(16.666f - elapsed_ms);
 
