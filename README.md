@@ -7,6 +7,10 @@
   <summary>Dev Gifs!!</summary>
   
   [![Image from Gyazo](https://i.gyazo.com/fcca514fe7576515948bbb6fd34b9b71.gif)](https://gyazo.com/fcca514fe7576515948bbb6fd34b9b71)
+
+  [![Image from Gyazo](https://i.gyazo.com/8674d43383507e05dac44b5a691fefb2.gif)](https://gyazo.com/8674d43383507e05dac44b5a691fefb2)
+
+  [![Image from Gyazo](https://i.gyazo.com/c88ed4d4e913a8981e9ba8f32a64271a.gif)](https://gyazo.com/c88ed4d4e913a8981e9ba8f32a64271a)
   
 </details>
 <br>
