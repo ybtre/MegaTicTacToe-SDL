@@ -1,10 +1,17 @@
 #DevLog - ~8:30h
 ## Multi Grid Tic Tac Toe
-<details>
-  <summary>Gifs!</summary>
-  [![Image from Gyazo](https://i.gyazo.com/fcca514fe7576515948bbb6fd34b9b71.gif)](https://gyazo.com/fcca514fe7576515948bbb6fd34b9b71)
-</details>
 
+<br>
+
+<details>
+  <summary>Dev Gifs!!</summary>
+  
+  [![Image from Gyazo](https://i.gyazo.com/fcca514fe7576515948bbb6fd34b9b71.gif)](https://gyazo.com/fcca514fe7576515948bbb6fd34b9b71)
+  
+</details>
+<br>
+<br>
+<br>
 
 ## Game 3/10 in the 10 games in 10 weeks challenge
 ////////////////////////////////////
