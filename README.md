@@ -17,6 +17,12 @@
 <br>
 <br>
 
+## Building:
+Only on Windows.
+- go to root folder
+- use command "make"
+- either run Game.exe from build folder or use "run.bat" file
+
 ## Game 3/10 in the 10 games in 10 weeks challenge
 ////////////////////////////////////
               NOTE:
