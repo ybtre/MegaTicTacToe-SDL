@@ -3,16 +3,12 @@
 
 <br>
 
-<details>
-  <summary>Dev Gifs!!</summary>
-  
   [![Mega Tic Tac Toe Final](MTT_final.gif)]
 
   [![Mega Tic Tac Toe WIP](MTT_wip.gif)]
 
   [![Mega Tic Tac Toe Earlu](MTT_early.gif)]
   
-</details>
 <br>
 <br>
 <br>
